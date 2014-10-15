@@ -1,19 +1,38 @@
-FROM	debian:wheezy
+FROM	maxexcloo/nginx-php:latest
 
 MAINTAINER Goldy
 
-ADD	apt-no-recommends /etc/apt/apt.conf.d/apt-no-recommends
+ENV	LD_LIBRARY_PATH /usr/local/lib
+ADD	apt-no-recommends /etc/apt/apt.conf.d/10-no-recommends
 RUN	apt-get update
-RUN	apt-get install nginx php5-fpm qrencode mercurial patch git qrencode poppler-utils
+RUN	apt-get install -y qrencode mercurial patch git qrencode poppler-utils pngcrush php5-mcrypt php5-imagick php5-gd supervisor ghostscript graphicsmagick-imagemagick-compat
+
+# Build zbarimg
+WORKDIR /root
+RUN	hg clone http://hg.code.sf.net/p/zbar/code zbarimg
+ADD	qrdectxt.c.patch /root/qrdectxt.c.patch
+RUN	patch zbarimg/zbar/qrcode/qrdectxt.c < qrdectxt.c.patch
+WORKDIR zbarimg
+RUN	apt-get install -y build-essential libmagick++-dev gettext libtool autoconf automake
+RUN	autoreconf --install
+RUN	./configure --with-x=no --with-jpeg=no --enable-video=no --with-python=no --with-gtk=no --with-qt=no
+RUN	make && make install-exec
+
+# Conf nginx
+RUN    /bin/sed -i 's/\/data\/http/\/var\/www\/qraidcode\/public/g' /etc/nginx/host.d/default.conf
+
 WORKDIR	/var/www/
+RUN	apt-get install -y ca-certificates
 RUN	mkdir qraidcode
-RUN	mkdir bin
-RUN	chmod -r www-data:www-data .
+RUN	chown -R www-data:www-data .
 USER	www-data
 
-# Clone repositories
+# Clone repository
 RUN	git clone https://github.com/cmehay/qraidcode_php.git qraidcode
-RUN	hg clone http://hg.code.sf.net/p/zbar/code bin/zbarimg
-RUN	git clone -b "pngcrush" git://git.code.sf.net/p/pmt/code bin/pngcrush
+RUN	rm -rf qraidcode/.git
 
-# Build
+# Install tFPDF
+RUN	git clone https://github.com/rev42/tfpdf.git tfpdf
+
+# Switch to user root for initialisation
+USER	root

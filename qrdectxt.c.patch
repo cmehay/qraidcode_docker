@@ -1,0 +1,17 @@
+--- zbar/zbar/qrcode/qrdectxt.c	2014-10-12 00:26:19.251951912 +0200
++++ qrdectxt.c	2014-10-12 00:22:04.106686709 +0200
+@@ -254,7 +254,13 @@
+             Does such a thing occur?
+             Is it allowed?
+             It requires copying buffers around to handle correctly.*/
+-          case QR_MODE_BYTE:
++          case QR_MODE_BYTE:{
++	    in=(char *)entry->payload.data.buf;
++            inleft=entry->payload.data.len;
++            out=sa_text+sa_ntext;
++	    memcpy(out, in, inleft);
++	    sa_ntext += inleft;
++	  }break;
+           case QR_MODE_KANJI:{
+             in=(char *)entry->payload.data.buf;
+             inleft=entry->payload.data.len;
