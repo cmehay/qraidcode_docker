@@ -25,6 +25,7 @@ WORKDIR	/var/www/
 RUN	apt-get install -y ca-certificates
 RUN	mkdir qraidcode
 RUN	chown -R www-data:www-data .
+RUN	chown -R www-data:www-data /var/lib/php5
 USER	www-data
 
 # Clone repository
