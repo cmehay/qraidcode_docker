@@ -6,7 +6,7 @@ ENV	LD_LIBRARY_PATH /usr/local/lib
 ADD	apt-no-recommends /etc/apt/apt.conf.d/10-no-recommends
 ADD	backport.list /etc/apt/sources.list.d/backport.list
 RUN	apt-get update && apt-get -y dist-upgrade
-RUN	apt-get install -y qrencode mercurial patch git qrencode poppler-utils pngcrush php5-mcrypt php5-imagick php5-gd supervisor ghostscript graphicsmagick-imagemagick-compat ca-certificates emacs23-nox
+RUN	apt-get install -y qrencode mercurial patch git qrencode poppler-utils pngcrush php5-mcrypt php5-imagick php5-gd supervisor ghostscript graphicsmagick-imagemagick-compat ca-certificates
 
 # Build zbarimg
 WORKDIR /root
@@ -37,3 +37,4 @@ RUN	git clone https://github.com/rev42/tfpdf.git tfpdf
 
 # Switch to user root for initialisation
 USER	root
+RUN	apt-get -y install emacs23-nox
