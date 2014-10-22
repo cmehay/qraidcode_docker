@@ -4,8 +4,9 @@ MAINTAINER Goldy
 
 ENV	LD_LIBRARY_PATH /usr/local/lib
 ADD	apt-no-recommends /etc/apt/apt.conf.d/10-no-recommends
-RUN	apt-get update
-RUN	apt-get install -y qrencode mercurial patch git qrencode poppler-utils pngcrush php5-mcrypt php5-imagick php5-gd supervisor ghostscript graphicsmagick-imagemagick-compat
+ADD	backport.list /etc/apt/sources.list.d/backport.list
+RUN	apt-get update && apt-get -y dist-upgrade
+RUN	apt-get install -y qrencode mercurial patch git qrencode poppler-utils pngcrush php5-mcrypt php5-imagick php5-gd supervisor ghostscript graphicsmagick-imagemagick-compat ca-certificates
 
 # Build zbarimg
 WORKDIR /root
@@ -22,7 +23,6 @@ RUN	make && make install-exec
 RUN    /bin/sed -i 's/\/data\/http/\/var\/www\/qraidcode\/public/g' /etc/nginx/host.d/default.conf
 
 WORKDIR	/var/www/
-RUN	apt-get install -y ca-certificates
 RUN	mkdir qraidcode
 RUN	chown -R www-data:www-data .
 RUN	chown -R www-data:www-data /var/lib/php5
