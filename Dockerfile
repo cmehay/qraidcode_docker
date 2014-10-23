@@ -30,7 +30,6 @@ USER	www-data
 
 # Clone repository
 RUN	git clone https://github.com/cmehay/qraidcode_php.git qraidcode
-RUN	rm -rf qraidcode/.git
 
 # Install tFPDF
 RUN	git clone https://github.com/rev42/tfpdf.git tfpdf
