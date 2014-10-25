@@ -1,4 +1,4 @@
-FROM	maxexcloo/nginx-php:bgqafrehr3fppetndyetbxw
+FROM	goldy/nginx-php
 
 MAINTAINER Goldy
 
